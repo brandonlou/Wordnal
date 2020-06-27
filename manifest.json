@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Wordnal",
+    "version": "0.0.1",
+    "description": "Wordnal is a word journal!",
+    "homepage_url": "https://github.com/brandonlou/wordnal",
+
+    "icons": {
+        "48": "icons/wordnal-48.png",
+        "96": "icons/wordnal-96.png"
+    },
+
+    "permissions": [
+        "contextMenus",
+        "storage",
+        "unlimitedStorage",
+        "notifications"
+    ],
+
+    "browser_action": {
+        "default_icon": {
+            "19": "icons/wordnal-19.png",
+            "38": "icons/wordnal-38.png"
+        },
+        "default_title": "Wordnal"
+    },
+
+    "background": {
+        "scripts": ["wordnal.js"]
+    }
+}
