@@ -26,6 +26,6 @@
     },
 
     "background": {
-        "scripts": ["wordnal.js"]
+        "scripts": ["background.js"]
     }
 }

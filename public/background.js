@@ -27,14 +27,42 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
     // Handle "word-selection" context menu item.
     if(info.menuItemId == "word-selection") {
-        const newWord = info.selectionText;
-        const settingItem = browser.storage.local.set({
-            [newWord]: "Test definition",
-        });
-        console.log("Added: " + newWord);
-        if(showNotifications) {
-            showNotification();
-        }
+        let newWord = info.selectionText;
+        newWord = newWord.toLowerCase();
+        newWord.trim(); // Removes leading and trailing whitespace.
+
+        const currentDate = new Date().toJSON().substring(0, 10);
+
+        fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord)
+            .then((res) => res.json())
+            .then((allDefs) => {
+                let shortDef = null;
+                if(allDefs.title && allDefs.title == "No Definitions Found") {
+                    shortDef = null;
+                } else {
+                    shortDef = {
+                        partOfSpeech: allDefs[0].meanings[0].partOfSpeech,
+                        meaning: allDefs[0].meanings[0].definitions[0].definition
+                    };
+                    // allDefs.forEach((defCategory) => {
+                    // });
+                }
+                browser.storage.local.set({
+                    [newWord]: {
+                        shortDef: shortDef,
+                        fullDef: null,
+                        date: currentDate
+                    }
+                });
+                console.log("Added: " + newWord);
+                if(showNotifications) {
+                    showNotification();
+                }
+            })
+
+            .catch((err) => {
+                console.error(err);
+            })
     }
 
 });
@@ -43,7 +71,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 const openDisplayPage = () => {
 
     const displayPref = {
-        url: "/display/index.html",
+        url: "index.html",
         active: true,
         openInReaderMode: false
     };
