@@ -25,6 +25,10 @@
         "default_title": "Wordnal"
     },
 
+    "options_ui": {
+        "page": "/settings/options.html"
+    },
+
     "background": {
         "scripts": ["background.js"]
     }

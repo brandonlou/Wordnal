@@ -2,13 +2,22 @@
     font-family: Ariel, Helvetica, sans-serif;
 }
 
+.AppOptions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
 table {
     width: 100%;
 }
 
 th, td {
     border-bottom: 1px solid #ddd;
-    padding: 0.5em;
+    padding-top: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 th {
