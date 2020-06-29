@@ -1,18 +1,10 @@
-const showNotifications = true;
-
-// Called when menu item is created. Log success/failure here.
+// Called when menu item is created. Logs success or failure.
 const onCreated = () => {
     if(browser.runtime.lastError) {
         console.log(`Error: ${browser.runtime.lastError}`);
     } else {
         console.log("Menu item created successfully!");
     }
-}
-
-const printWords = () => {
-    browser.storage.local.get(null, (results) => {
-        console.log(results);
-    });
 }
 
 // Create context menu item.
@@ -22,52 +14,98 @@ browser.contextMenus.create({
     contexts: ["selection"]
 }, onCreated);
 
+
+const sanitizeWord = (word) => {
+    word = word.toLowerCase();
+    word.trim();
+    return word;
+}
+
+
 // Listens when a context menu item is clicked.
 browser.contextMenus.onClicked.addListener((info, tab) => {
 
-    // Handle "word-selection" context menu item.
+    // Handles "word-selection" context menu item.
     if(info.menuItemId == "word-selection") {
-        let newWord = info.selectionText;
-        newWord = newWord.toLowerCase();
-        newWord.trim(); // Removes leading and trailing whitespace.
 
-        const currentDate = new Date().toJSON().substring(0, 10);
+        const newWord = sanitizeWord(info.selectionText);
 
-        fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord)
-            .then((res) => res.json())
-            .then((allDefs) => {
-                let shortDef = null;
-                if(allDefs.title && allDefs.title == "No Definitions Found") {
-                    shortDef = null;
-                } else {
-                    shortDef = {
-                        partOfSpeech: allDefs[0].meanings[0].partOfSpeech,
-                        meaning: allDefs[0].meanings[0].definitions[0].definition
-                    };
-                    // allDefs.forEach((defCategory) => {
-                    // });
+        browser.storage.local.get("words", (value) => {
+            let wordsList = value.words;
+            if(wordsList === undefined) {
+                wordsList = [];
+            }
+
+            // Check if new word is already stored.
+            let duplicateWord = false;
+            wordsList.forEach((entry) => {
+                if(entry.word == newWord) {
+                    duplicateWord = true;
+                    return;
                 }
-                browser.storage.local.set({
-                    [newWord]: {
-                        shortDef: shortDef,
-                        fullDef: null,
+            });
+            if(duplicateWord) {
+                console.log(newWord + "already exists!");
+                return;
+            }
+
+            const currentDate = new Date(); // Get current time.
+
+            // Get word definitions. Requires internet connection.
+            fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord)
+                .then((res) => res.json()) // Convert response to JSON.
+                .then((allDefs) => {
+
+                    let newEntry = {
+                        word: newWord,
                         date: currentDate
+                    };
+
+                    // No definition found.
+                    if(allDefs.title && allDefs.title == "No Definitions Found") {
+                        newEntry.meanings = [];
+
+                    // At least one definition. Parse them all.
+                    } else {
+                        let meaningsList = [];
+                        allDefs.forEach((wordType) => {
+                            wordType.meanings.forEach((meaning) => {
+                                const partOfSpeech = meaning.partOfSpeech;
+                                meaning.definitions.forEach((d) => {
+                                    const definition = d.definition;
+                                    meaningsList.push({
+                                        part_of_speech: partOfSpeech,
+                                        definition: definition
+                                    });
+                                })
+                            });
+                        });
+                        newEntry.meanings = meaningsList;
                     }
-                });
-                console.log("Added: " + newWord);
-                if(showNotifications) {
-                    showNotification();
-                }
-            })
 
-            .catch((err) => {
-                console.error(err);
-            })
+                    wordsList.push(newEntry);
+
+                    browser.storage.local.set({
+                        words: wordsList
+                    });
+
+                    console.log("Added: " + newWord);
+
+                    // if(showNotifications) {
+                    //     showNotification();
+                    // }
+                })
+
+                // User is offline.
+                .catch((err) => {
+                    console.error(err);
+                })
+        });
     }
-
 });
 
-// Event handler to open a new tab showing all words.
+
+// Handles opening new tab with user's words.
 const openDisplayPage = () => {
 
     const displayPref = {
@@ -90,4 +128,11 @@ const showNotification = (title, message) => {
     //     "title": "Test title",
     //     "message": "Test message"
     // });
+}
+
+// Debugging
+const printWords = () => {
+    browser.storage.local.get(null, (results) => {
+        console.log(results);
+    });
 }

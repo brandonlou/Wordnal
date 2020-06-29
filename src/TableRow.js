@@ -8,8 +8,7 @@ class TableRow extends React.Component {
         super(props);
         this.state = {
             word: props.value.word,
-            shortDef: props.value.shortDef,
-            fullDef: props.value.fullDef,
+            meanings: props.value.meanings,
             date: props.value.date,
             active: false
         } 
@@ -19,23 +18,23 @@ class TableRow extends React.Component {
         this.setState({
             active: !this.state.active
         });
-        console.log("clicked!");
     }
 
     renderDefinition() {
         if(this.state.active) {
-            return <FullDefinition value={this.state.fullDef} />
+            return <FullDefinition value={this.state.meanings} />
         } else {
-            return <ShortDefinition value={this.state.shortDef} />
+            return <ShortDefinition value={this.state.meanings[0]} />
         }
     }
 
     render() {
+        const readableDate = this.state.date.toJSON().substring(0, 10);
         return (
             <tr onClick={() => this.handleClick()}>
                 <td className="small-column">{this.state.word}</td>
                 <td className="large-column">{this.renderDefinition()}</td>
-                <td className="small-column">{this.state.date}</td>
+                <td className="small-column">{readableDate}</td>
             </tr>
         );
     }
