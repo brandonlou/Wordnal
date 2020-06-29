@@ -14,13 +14,31 @@ browser.contextMenus.create({
     contexts: ["selection"]
 }, onCreated);
 
-
 const sanitizeWord = (word) => {
     word = word.toLowerCase();
     word.trim();
     return word;
 }
 
+const isDuplicate = (word, wordsList) => {
+    for(const entry of wordsList) {
+        if(entry.word == word) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Shows a notification.
+const showNotification = (title, message) => {
+    browser.notifications.create({
+        type: "basic",
+        // iconUrl: browser.extension.getURL("/icons/icon-48.png"),
+        title: title,
+        message: message
+    });
+    console.log("trying to add notification");
+}
 
 // Listens when a context menu item is clicked.
 browser.contextMenus.onClicked.addListener((info, tab) => {
@@ -37,15 +55,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
             }
 
             // Check if new word is already stored.
-            let duplicateWord = false;
-            wordsList.forEach((entry) => {
-                if(entry.word == newWord) {
-                    duplicateWord = true;
-                    return;
-                }
-            });
-            if(duplicateWord) {
-                console.log(newWord + "already exists!");
+            if(isDuplicate(newWord, wordsList)) {
+                console.log(newWord + " already exists!");
                 return;
             }
 
@@ -83,17 +94,16 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
                         newEntry.meanings = meaningsList;
                     }
 
+                    // Add new word entry to current list of words.
                     wordsList.push(newEntry);
 
+                    // Update stored list of words.
                     browser.storage.local.set({
                         words: wordsList
                     });
 
                     console.log("Added: " + newWord);
-
-                    // if(showNotifications) {
-                    //     showNotification();
-                    // }
+                    showNotification("Added new word!", newWord);
                 })
 
                 // User is offline.
@@ -119,16 +129,6 @@ const openDisplayPage = () => {
 
 // Listens when the toolbar button is clicked.
 browser.browserAction.onClicked.addListener(openDisplayPage);
-
-// Shows a notification. Does not work (check my browser settings)...
-const showNotification = (title, message) => {
-    // browser.notifications.create({
-    //     "type": "basic",
-    //     "iconUrl": browser.extension.getURL("/icons/icon-48.png"),
-    //     "title": "Test title",
-    //     "message": "Test message"
-    // });
-}
 
 // Debugging
 const printWords = () => {
