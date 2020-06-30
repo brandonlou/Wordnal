@@ -20,6 +20,7 @@ const sanitizeWord = (word) => {
     return word;
 }
 
+// Checks if word exists in an array of word objects.
 const isDuplicate = (word, wordsList) => {
     for(const entry of wordsList) {
         if(entry.word == word) {
@@ -29,11 +30,12 @@ const isDuplicate = (word, wordsList) => {
     return false;
 }
 
-// Shows a notification.
+// Shows a notification based on a title and message string.
 const showNotification = async (title, message) => {
 
+    // Checks if user has turned notifications on or off.
     const options = await browser.storage.local.get("options");
-    let notify = "on";
+    let notify = "on"; // Default is on.
     if(options.options) {
         notify = options.options.notifications;
     }

@@ -1,6 +1,5 @@
 import React from 'react';
-import ShortDefinition from './ShortDefinition.js';
-import FullDefinition from './FullDefinition.js';
+import WordOptions from './WordOptions.js';
 
 class TableRow extends React.Component {
 
@@ -11,7 +10,7 @@ class TableRow extends React.Component {
             meanings: props.value.meanings,
             date: props.value.date,
             active: false
-        } 
+        };
     }
 
     handleClick() {
@@ -21,21 +20,38 @@ class TableRow extends React.Component {
     }
 
     renderDefinition() {
-        if(this.state.active) {
-            return <FullDefinition value={this.state.meanings} />
-        } else {
-            return <ShortDefinition value={this.state.meanings[0]} />
+        const word = this.state.meanings[0];
+        let partOfSpeech = "";
+        let definition = "";
+        if(word != undefined) {
+            partOfSpeech = word.part_of_speech;
+            definition = word.definition;
         }
+        return (
+            <React.Fragment>
+                <span className="part-of-speech">{partOfSpeech}</span>&nbsp;
+                <span className="meaning">{definition}</span>
+            </React.Fragment>
+        );
+    }
+
+    renderDate() {
+        const readableDate = this.state.date.toJSON().substring(0, 10);
+        return (
+            <span>{readableDate}</span>
+        );
     }
 
     render() {
-        const readableDate = this.state.date.toJSON().substring(0, 10);
         return (
-            <tr onClick={() => this.handleClick()}>
-                <td className="small-column">{this.state.word}</td>
-                <td className="large-column">{this.renderDefinition()}</td>
-                <td className="small-column">{readableDate}</td>
-            </tr>
+            <React.Fragment>
+                <tr onClick={() => this.handleClick()}>
+                    <td className="small-column">{this.state.word}</td>
+                    <td className="large-column">{this.renderDefinition()}</td>
+                    <td className="small-column">{this.renderDate()}</td>
+                </tr>
+                <WordOptions active={this.state.active} />
+            </React.Fragment>
         );
     }
 }
