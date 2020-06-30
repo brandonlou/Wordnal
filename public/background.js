@@ -30,23 +30,35 @@ const isDuplicate = (word, wordsList) => {
 }
 
 // Shows a notification.
-const showNotification = (title, message) => {
-    browser.notifications.create({
-        type: "basic",
-        // iconUrl: browser.extension.getURL("/icons/icon-48.png"),
-        title: title,
-        message: message
-    });
-    console.log("trying to add notification");
+const showNotification = async (title, message) => {
+
+    const options = await browser.storage.local.get("options");
+    let notify = "on";
+    if(options.options) {
+        notify = options.options.notifications;
+    }
+
+    if(notify == "off") {
+        return;
+
+    } else {
+        browser.notifications.create({
+            type: "basic",
+            iconUrl: browser.extension.getURL("/icons/icon-48.png"),
+            title: title,
+            message: message
+        });
+    }
+
 }
 
 // Listens when a context menu item is clicked.
-browser.contextMenus.onClicked.addListener((info, tab) => {
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
     // Handles "word-selection" context menu item.
     if(info.menuItemId == "word-selection") {
 
-        const newWord = sanitizeWord(info.selectionText);
+        const newWord = await sanitizeWord(info.selectionText);
 
         browser.storage.local.get("words", (value) => {
             let wordsList = value.words;
@@ -56,7 +68,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
             // Check if new word is already stored.
             if(isDuplicate(newWord, wordsList)) {
-                console.log(newWord + " already exists!");
+                showNotification("Wordnal: Word Already Exists.", newWord);
                 return;
             }
 
@@ -103,7 +115,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
                     });
 
                     console.log("Added: " + newWord);
-                    showNotification("Added new word!", newWord);
+                    showNotification("Wordnal: Added New Word!", newWord);
                 })
 
                 // User is offline.

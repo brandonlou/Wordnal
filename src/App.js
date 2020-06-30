@@ -16,12 +16,29 @@ class App extends React.Component {
         super();
         this.state = {
             words: [],
-            title: "My Wordnal"
+            options: {}
         };
     }
 
     componentDidMount() {
         this.retrieveWords();
+        this.retrieveOptions();
+    }
+
+    retrieveOptions() {
+        browser.storage.local.get("options", (result) => {
+            let storedOptions = result.options;
+            if(storedOptions == undefined) {
+                storedOptions = {
+                    name: "My",
+                    color: "#ffffff",
+                    notifications: "on"
+                }
+            }
+            this.setState({
+                options: storedOptions
+            });
+        });
     }
 
     // Retrieve stored words into state.
@@ -42,7 +59,7 @@ class App extends React.Component {
     render() {
         return (
             <div className="App">
-                <Title className="AppTitle" value={this.state.title} />
+                <Title className="AppTitle" value={this.state.options.name} />
                 <div className="AppOptions">
                     <SortDropdown className="AppSortDropdown" />
                     <SettingsButton className="AppSettingsButton" />

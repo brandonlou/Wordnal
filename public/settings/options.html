@@ -7,13 +7,24 @@
 
 <body>
     <form>
-        <label for="title">Custom title: </label>
-        <input type="text" id="title" name="title">
+        <label>
+            Name
+            <input type="text" id="name">
+        </label>
         <br><br>
-        <label for="color">Background color: </label>
-        <input type="color" id="color" name="color">
+
+        <label>
+            Background color
+            <input type="color" id="color">
+        </label>
         <br><br>
-        <input type="submit" value="Save">
+
+        Notifications
+        <input type="radio" name="notifications" id="on" value="on"> On
+        <input type="radio" name="notifications" id="off" value="off"> Off
+        <br><br>
+
+        <button type="submit">Save</button>
     </form>
 
     <script src="options.js"></script>
