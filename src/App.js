@@ -7,7 +7,7 @@ import Table from './Table.js';
 import Title from './Title.js';
 import SortDropdown from './SortDropdown.js';
 import SettingsButton from './SettingsButton.js';
-import AddWordInput from './AddWordInput.js';
+import AddWordModal from './AddWordModal.js';
 import './App.css';
 
 class App extends React.Component {
@@ -25,6 +25,11 @@ class App extends React.Component {
     componentDidMount() {
         this.retrieveWords();
         this.retrieveOptions();
+        browser.storage.onChanged.addListener(this.handleStorageChange);
+    }
+
+    componentWillUnmount() {
+        browser.storage.onChanged.removeListener(this.handleStorageChange);
     }
 
     retrieveOptions() {
@@ -58,10 +63,13 @@ class App extends React.Component {
         });
     }
 
+    handleStorageChange(changes, area) {
+        console.log("something changed!");
+    }
+
     handleClick() {
-        this.setState({
-            addWordActive: !this.state.addWordActive
-        });
+        const modal = document.getElementById("modal");
+        modal.style.display = "block";
     }
 
     render() {
@@ -73,8 +81,8 @@ class App extends React.Component {
                     <button onClick={() => this.handleClick()}>Add Word</button>
                     <SettingsButton className="AppSettingsButton" />
                 </div>
-                <AddWordInput active={this.state.addWordActive} />
                 <Table className="AppTable" value={this.state.words} />
+                <AddWordModal />
             </div>
         );
     }
