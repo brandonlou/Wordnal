@@ -52,14 +52,8 @@ class App extends React.Component {
     // Retrieve stored words into state.
     retrieveWords() {
         browser.storage.local.get("words", (result) => {
-            result.words.forEach((value) => {
-                this.setState({
-                    words: [...this.state.words, {
-                        word: value.word,
-                        meanings: value.meanings,
-                        date: value.date
-                    }]
-                });
+            this.setState({
+                words: result.words
             });
         });
     }

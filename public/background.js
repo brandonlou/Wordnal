@@ -109,7 +109,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
                     }
 
                     // Add new word entry to current list of words.
-                    wordsList.push(newEntry);
+                    wordsList.unshift(newEntry);
 
                     // Update stored list of words.
                     browser.storage.local.set({
@@ -123,7 +123,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
                 // User is offline.
                 .catch((err) => {
                     showNotification("Wordnal: Could Not Fetch Definition", newWord);
-                    wordsList.push({
+                    wordsList.unshift({
                         word: newWord,
                         date: currentDate,
                         meanings: []

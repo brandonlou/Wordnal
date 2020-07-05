@@ -7,7 +7,6 @@ class SortDropdown extends React.Component {
         this.state = {
             value: "new"
         };
-        this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(event) {
@@ -23,10 +22,11 @@ class SortDropdown extends React.Component {
             <form>
                 <label>
                     Sort by:&nbsp;
-                    <select value={this.state.value} onChange={this.handleChange}>
+                    <select value={this.state.value} onChange={(e) => this.handleChange(e)}>
                         <option value="new">New</option>
                         <option value="old">Old</option>
                         <option value="a-z">A-Z</option>
+                        <option value="rand">Random</option>
                     </select>
                 </label>
             </form>
