@@ -122,7 +122,15 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
                 // User is offline.
                 .catch((err) => {
-                    console.error(err);
+                    showNotification("Wordnal: Could Not Fetch Definition", newWord);
+                    wordsList.push({
+                        word: newWord,
+                        date: currentDate,
+                        meanings: []
+                    });
+                    browser.storage.local.set({
+                        words: wordsList
+                    });
                 })
         });
     }
@@ -144,7 +152,7 @@ const openDisplayPage = () => {
 // Listens when the toolbar button is clicked.
 browser.browserAction.onClicked.addListener(openDisplayPage);
 
-// Debugging
+// Debugging.
 const printWords = () => {
     browser.storage.local.get(null, (results) => {
         console.log(results);
