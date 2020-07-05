@@ -87,7 +87,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
                     };
 
                     // No definition found.
-                    if(allDefs.title && allDefs.title == "No Definitions Found") {
+                    if(allDefs == undefined || allDefs.title == "No Definitions Found") {
                         newEntry.meanings = [];
 
                     // At least one definition. Parse them all.

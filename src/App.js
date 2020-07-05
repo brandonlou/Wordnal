@@ -20,6 +20,7 @@ class App extends React.Component {
             options: {},
             addWordActive: false
         };
+        this.handleStorageChange = this.handleStorageChange.bind(this);
     }
 
     componentDidMount() {
@@ -63,8 +64,14 @@ class App extends React.Component {
         });
     }
 
+    // Updates component state whenever a change to browser storage is detected.
     handleStorageChange(changes, area) {
-        console.log("something changed!");
+        if(changes.words != undefined) {
+            const newWords = changes.words.newValue;
+            this.setState({
+                words: newWords
+            });
+        }
     }
 
     handleClick() {
