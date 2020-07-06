@@ -85,7 +85,7 @@ class Table extends React.Component {
                     <th>Definition</th>
                     <th>Date Added</th>
                 </tr>
-                {this.props.value.map((item, i) => this.renderRow(item, i))}
+                {this.props.value && this.props.value.map((item, i) => this.renderRow(item, i))}
             </table>
         );
     }
