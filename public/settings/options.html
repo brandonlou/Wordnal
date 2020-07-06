@@ -3,31 +3,30 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./options.css">
 </head>
 
 <body>
     <form>
-        <label>
-            Name
+        <p>
+            <label>Name</label>
             <input type="text" id="name">
-        </label>
-        <br><br>
-
-        <label>
-            Background color
+        </p><br>
+        <p>
+            <label>Background Color</label>
             <input type="color" id="color">
-        </label>
-        <br><br>
-
-        Notifications
-        <input type="radio" name="notifications" id="on" value="on"> On
-        <input type="radio" name="notifications" id="off" value="off"> Off
-        <br><br>
-
-        <button type="submit">Save</button>
+        </p><br>
+        <p>
+            <label>Notifications</label>
+            <input type="radio" name="notifications" id="on" value="on"> On
+            <input type="radio" name="notifications" id="off" value="off"> Off
+        </p><br>
+        <p>
+            <button type="submit">Save</button>
+        </p>
     </form>
 
-    <script src="options.js"></script>
+    <script src="./options.js"></script>
 </body>
 
 </html>

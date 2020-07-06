@@ -16,7 +16,7 @@ class SettingsButton extends React.Component {
 
     render() {
         return (
-            <button onClick={this.handleClick}>
+            <button onClick={this.handleClick} className="AppSettingsButton">
                 Settings
             </button>
         );

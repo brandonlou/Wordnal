@@ -1,0 +1,16 @@
+form {
+    display: table;
+}
+
+p {
+    display: table-row;
+}
+
+label {
+    display: table-cell;
+    width: 50%
+}
+
+input {
+    display: table-cell;
+}

@@ -54,86 +54,77 @@ const showNotification = async (title, message) => {
 
 }
 
+const addWord = async (newWord) => {
+
+    if(typeof newWord !== "string") {
+        return;
+    }
+
+    newWord = await sanitizeWord(newWord);
+
+    const result = await browser.storage.local.get("words");
+    let wordsList = result.words || []; // Create empty array if no words stored yet.
+
+    // Check if new word is already stored.
+    if(isDuplicate(newWord, wordsList)) {
+        showNotification("Wordnal: Word Already Exists.", newWord);
+        return;
+    }
+
+    const currentDate = new Date(); // Get current time.
+
+    // Fetch definition. Requires internet connection.
+    let allDefs = null;
+    try {
+        const response = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord);
+        if(response.status >= 400 && response.status < 600) {
+            throw new Error("Bad response from server.");
+        }
+        allDefs = await response.json();
+    } catch(error) {
+        console.error(error);
+    }
+
+    let meaningsList = [];
+
+    // At least one definition found.
+    if(allDefs && !allDefs.title) {
+        allDefs.forEach((wordType) => {
+            wordType.meanings.forEach((meaning) => {
+                const partOfSpeech = meaning.partOfSpeech;
+                meaning.definitions.forEach((d) => {
+                    const definition = d.definition;
+                    meaningsList.push({
+                        part_of_speech: partOfSpeech,
+                        definition: definition
+                    });
+                })
+            });
+        });
+    }
+
+    const newEntry = {
+        word: newWord,
+        meanings: meaningsList,
+        date: currentDate
+    };
+
+    // Update stored list of words.
+    wordsList.unshift(newEntry);
+    const setting = await browser.storage.local.set({ words: wordsList });
+
+    showNotification("Wordnal: Added New Word!", newWord);
+
+}
+
 // Listens when a context menu item is clicked.
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
     // Handles "word-selection" context menu item.
     if(info.menuItemId == "word-selection") {
-
-        const newWord = await sanitizeWord(info.selectionText);
-
-        browser.storage.local.get("words", (value) => {
-            let wordsList = value.words;
-            if(wordsList === undefined) {
-                wordsList = [];
-            }
-
-            // Check if new word is already stored.
-            if(isDuplicate(newWord, wordsList)) {
-                showNotification("Wordnal: Word Already Exists.", newWord);
-                return;
-            }
-
-            const currentDate = new Date(); // Get current time.
-
-            // Get word definitions. Requires internet connection.
-            fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord)
-                .then((res) => res.json()) // Convert response to JSON.
-                .then((allDefs) => {
-
-                    let newEntry = {
-                        word: newWord,
-                        date: currentDate
-                    };
-
-                    // No definition found.
-                    if(allDefs == undefined || allDefs.title == "No Definitions Found") {
-                        newEntry.meanings = [];
-
-                    // At least one definition. Parse them all.
-                    } else {
-                        let meaningsList = [];
-                        allDefs.forEach((wordType) => {
-                            wordType.meanings.forEach((meaning) => {
-                                const partOfSpeech = meaning.partOfSpeech;
-                                meaning.definitions.forEach((d) => {
-                                    const definition = d.definition;
-                                    meaningsList.push({
-                                        part_of_speech: partOfSpeech,
-                                        definition: definition
-                                    });
-                                })
-                            });
-                        });
-                        newEntry.meanings = meaningsList;
-                    }
-
-                    // Add new word entry to current list of words.
-                    wordsList.unshift(newEntry);
-
-                    // Update stored list of words.
-                    browser.storage.local.set({
-                        words: wordsList
-                    });
-
-                    console.log("Added: " + newWord);
-                    showNotification("Wordnal: Added New Word!", newWord);
-                })
-
-                // User is offline.
-                .catch((err) => {
-                    showNotification("Wordnal: Could Not Fetch Definition", newWord);
-                    wordsList.unshift({
-                        word: newWord,
-                        date: currentDate,
-                        meanings: []
-                    });
-                    browser.storage.local.set({
-                        words: wordsList
-                    });
-                })
-        });
+        addWord(info.selectionText);
     }
+
 });
 
 
@@ -151,6 +142,11 @@ const openDisplayPage = () => {
 
 // Listens when the toolbar button is clicked.
 browser.browserAction.onClicked.addListener(openDisplayPage);
+
+// Listens when extension page sends a message.
+browser.runtime.onMessage.addListener((message, sender) => {
+    addWord(message);
+});
 
 // Debugging.
 const printWords = () => {

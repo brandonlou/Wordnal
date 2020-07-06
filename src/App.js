@@ -60,10 +60,16 @@ class App extends React.Component {
 
     // Updates component state whenever a change to browser storage is detected.
     handleStorageChange(changes, area) {
-        if(changes.words != undefined) {
+        if(changes.words) {
             const newWords = changes.words.newValue;
             this.setState({
                 words: newWords
+            });
+        }
+        if(changes.options) {
+            const newOptions = changes.options.newValue;
+            this.setState({
+                options: newOptions
             });
         }
     }
@@ -79,8 +85,8 @@ class App extends React.Component {
                 <Title className="AppTitle" value={this.state.options.name} />
                 <div className="AppOptions">
                     <SortDropdown className="AppSortDropdown" />
-                    <button onClick={() => this.handleClick()}>Add Word</button>
-                    <SettingsButton className="AppSettingsButton" />
+                    <button onClick={() => this.handleClick()} className="AddWordButton">+</button>
+                    <SettingsButton />
                 </div>
                 <Table className="AppTable" value={this.state.words} />
                 <AddWordModal />
