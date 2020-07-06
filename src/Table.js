@@ -17,7 +17,8 @@ class Table extends React.Component {
         }
         return (
             <React.Fragment>
-                <span className="part-of-speech">{partOfSpeech}</span>&nbsp;
+                <span className="part-of-speech">{partOfSpeech}</span>
+                &nbsp;&nbsp;
                 <span className="meaning">{definition}</span>
             </React.Fragment>
         );
@@ -26,27 +27,50 @@ class Table extends React.Component {
     // Takes a Date object and returns the date in a human readable form in some ISO standard.
     renderDate(date) {
         const readableDate = date.toJSON().substring(0, 10);
-        return readableDate;
+        return (
+            <span>{readableDate}</span>
+        );
     }
 
-    // Makes the WordOptions under each word row visible or hidden.
-    handleRowClick(word) {
+    // Makes the word options under each word row visible or hidden.
+    handleRowClick(event, word) {
 
-        // TODO: Close all current wordOptions
-        
-        const wordOptions = document.getElementById(word + "-options");
-        const styles = window.getComputedStyle(wordOptions);
+        // Background of the row clicked, not the text.
+        if(event.target.tagName != "TD") {
+            return;
+        }
+
+        // Get selected word option.
+        const selectedWordOption = document.getElementById(word + "-options");
+        const styles = window.getComputedStyle(selectedWordOption);
         const visibility = styles.getPropertyValue("visibility");
-        wordOptions.style.visibility = (visibility == "visible") ? "collapse" : "visible";
+
+        // Close all word options.
+        const allWordOptions = document.getElementsByClassName("WordOptions");
+        for(const element of allWordOptions) {
+            element.style.visibility = "collapse";
+        }
+
+        // Make selected word option visible if previously hidden.
+        if(visibility == "collapse") {
+            selectedWordOption.style.visibility = "visible";
+        }
+
     }
 
     renderRow(item, i) {
         return (
             <React.Fragment>
-                <tr onClick={() => this.handleRowClick(item.word)}>
-                    <td className="small-column">{item.word}</td>
-                    <td className="large-column">{this.renderDefinition(item.meanings)}</td>
-                    <td className="small-column">{this.renderDate(item.date)}</td>
+                <tr onClick={(event) => this.handleRowClick(event, item.word)}>
+                    <td className="small-column">
+                        <span>{item.word}</span>
+                    </td>
+                    <td className="large-column">
+                        {this.renderDefinition(item.meanings)}
+                    </td>
+                    <td className="small-column">
+                        {this.renderDate(item.date)}
+                    </td>
                 </tr>
                 <WordOptions value={item.word} />
             </React.Fragment>
