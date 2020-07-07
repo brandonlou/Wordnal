@@ -145,7 +145,7 @@ browser.browserAction.onClicked.addListener(openDisplayPage);
 
 // Listens when extension page sends a message.
 browser.runtime.onMessage.addListener((message, sender) => {
-    addWord(message);
+    addWord(message.newWord);
 });
 
 // Debugging.

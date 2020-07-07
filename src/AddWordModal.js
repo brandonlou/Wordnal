@@ -13,24 +13,37 @@ class AddWordModal extends React.Component {
         }
     }
 
+    // Cleares the input boxes by setting their state to an empty string.
+    clearInputBoxes() {
+        this.setState({
+            newWord: "",
+            newPoS: "",
+            newDefinition: ""
+        });
+    }
+
+    // Closes modal if user clicks the background of the modal.
     handleBackgroundClick(e) {
-        // Only close modal if background has been clicked and not the content.
         if(e.target.className == "modal") {
             e.target.style.display = "none";
+            this.clearInputBoxes();
         }
     }
 
+    // Closes modal if user clicks close button.
     handleCloseClick() {
-        const thisModal = document.getElementById("modal");
-        thisModal.style.display = "none";
+        document.getElementById("modal").style.display = "none";
+        this.clearInputBoxes();
     }
 
+    // Updates state according to the values in the text boxes.
     handleChange(event, property) {
         this.setState({
             [property]: event.target.value
         });
     }
 
+    // Sends a message to the background script to add new word. Then closes modal.
     handleAddClick(event) {
         event.preventDefault();
         browser.runtime.sendMessage({
@@ -43,9 +56,9 @@ class AddWordModal extends React.Component {
 
     render() {
         return (
-            <div id="modal" className="modal" onClick={this.handleBackgroundClick}>
+            <div id="modal" className="modal" onClick={(e) => this.handleBackgroundClick(e)}>
                 <div className="modal-content">
-                    <span className="close-modal" onClick={this.handleCloseClick}>
+                    <span className="close-modal" onClick={() => this.handleCloseClick()}>
                         &times;
                     </span>
                     <h3>Add Word</h3>
