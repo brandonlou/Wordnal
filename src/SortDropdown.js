@@ -13,9 +13,6 @@ class SortDropdown extends React.Component {
 
     handleChange(event) {
         const sortBy = event.target.value;
-        this.setState({
-            value: sortBy
-        });
 
         // Close all word options.
         const allWordOptions = document.getElementsByClassName("WordOptions");
@@ -52,11 +49,23 @@ class SortDropdown extends React.Component {
                 words: allWords
             });
 
+            // Update state last because some sorting algorithms take into account of previous
+            // sorting method for optimization.
+            this.setState({
+                value: sortBy
+            });
+
         });
     }
 
     // Sort an array of word objects from newest to oldest.
     newestSortWords(allWords) {
+
+        // If previous sort was by old, simply reverse the array.
+        if(this.state.value == "old") {
+            return allWords.reverse();
+        }
+
         allWords.sort((a, b) => {
             if(a.date > b.date) {
                 return -1;
@@ -73,6 +82,12 @@ class SortDropdown extends React.Component {
 
     // Sort an array of word objects from oldest to newest.
     oldestSortWords(allWords) {
+
+        // If previous sort was by new, simply reverse the array.
+        if(this.state.value == "new") {
+            return allWords.reverse();
+        }
+
         allWords.sort((a, b) => {
             if(a.date < b.date) {
                 return -1;
@@ -99,7 +114,7 @@ class SortDropdown extends React.Component {
         let currentIndex = allWords.length - 1;
 
         // Go through all words.
-        for(; currentIndex > 0; currentIndex--) {
+        for(; currentIndex > 0; --currentIndex) {
 
             // Select random word.
             const randomIndex = Math.floor(Math.random() * (currentIndex + 1));

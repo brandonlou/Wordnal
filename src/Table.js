@@ -1,7 +1,7 @@
 import React from 'react';
 import WordOptions from './WordOptions.js';
 
-class Table extends React.Component {
+export default class Table extends React.Component {
 
     constructor(props) {
         super(props);
@@ -90,5 +90,3 @@ class Table extends React.Component {
         );
     }
 }
-
-export default Table;
