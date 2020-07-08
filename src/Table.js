@@ -61,7 +61,7 @@ class Table extends React.Component {
     renderRow(item, i) {
         return (
             <React.Fragment>
-                <tr onClick={(event) => this.handleRowClick(event, item.word)}>
+                <tr onClick={(event) => this.handleRowClick(event, item.word)} className="WordRow">
                     <td className="small-column">
                         <span>{item.word}</span>
                     </td>
@@ -80,7 +80,7 @@ class Table extends React.Component {
     render() {
         return (
             <table>
-                <tr>
+                <tr className="TableHeader">
                     <th>Word</th>
                     <th>Definition</th>
                     <th>Date Added</th>

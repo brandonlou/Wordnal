@@ -11,21 +11,27 @@
 
 table {
     width: 100%;
+    border-collapse: collapse;
 }
 
 th, td {
-    border-bottom: 1px solid #ddd;
-    padding-top: 0.5em;
-    padding-right: 1em;
-    padding-bottom: 0.5em;
+    border-bottom: 1px solid #fcd5ce;
+    padding-top: 1em;
+    padding-right: 2em;
+    padding-bottom: 1em;
 }
 
 th {
     text-align: left;
 }
 
-tr:hover {
-    background-color: #f2f2f2;
+.WordRow:hover {
+    background-color: #fcd5ce;
+    cursor: pointer;
+}
+
+.WordRow span {
+    cursor: text;
 }
 
 .part-of-speech {
@@ -95,6 +101,7 @@ tr:hover {
 
 .WordOptions {
     visibility: collapse;
+    background-color: #fcd5ce;
 }
 
 .AppSettingsButton {

@@ -41,7 +41,9 @@ class WordOptions extends React.Component {
         return (
             <tr id={word + "-options"} className="WordOptions">
                 <td colspan="3">
-                    More definitions <span onClick={() => this.delete()}>Delete</span>
+                    More definitions...
+                    <button onClick={}>Edit</button>
+                    <button onClick={() => this.delete()}>Delete</button>
                 </td>
             </tr>
         );
