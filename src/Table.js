@@ -43,17 +43,17 @@ class Table extends React.Component {
         // Get selected word option.
         const selectedWordOption = document.getElementById(word + "-options");
         const styles = window.getComputedStyle(selectedWordOption);
-        const visibility = styles.getPropertyValue("visibility");
+        const visibility = styles.getPropertyValue("display");
 
         // Close all word options.
         const allWordOptions = document.getElementsByClassName("WordOptions");
         for(const element of allWordOptions) {
-            element.style.visibility = "collapse";
+            element.style.display = "none";
         }
 
         // Make selected word option visible if previously hidden.
-        if(visibility == "collapse") {
-            selectedWordOption.style.visibility = "visible";
+        if(visibility == "none") {
+            selectedWordOption.style.display = "table-row";
         }
 
     }

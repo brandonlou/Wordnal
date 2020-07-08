@@ -20,7 +20,7 @@ class SortDropdown extends React.Component {
         // Close all word options.
         const allWordOptions = document.getElementsByClassName("WordOptions");
         for(const element of allWordOptions) {
-            element.style.visibility = "collapse";
+            element.style.display = "none";
         }
 
         browser.storage.local.get("words", (result) => {

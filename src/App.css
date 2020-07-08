@@ -100,7 +100,7 @@ th {
 }
 
 .WordOptions {
-    visibility: collapse;
+    display: none;
     background-color: #fcd5ce;
 }
 

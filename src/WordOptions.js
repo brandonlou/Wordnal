@@ -22,7 +22,7 @@ class WordOptions extends React.Component {
                 if(wordObject.word == this.props.value) {
 
                     // Hide the word options.
-                    document.getElementById(this.props.value + "-options").style.visibility = "collapse";
+                    document.getElementById(this.props.value + "-options").style.display = "none";
 
                     // Get index of word to delete and remove it from array.
                     const index = allWords.indexOf(wordObject);
