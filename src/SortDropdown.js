@@ -16,111 +16,106 @@ class SortDropdown extends React.Component {
         this.setState({
             value: sortBy
         });
-        switch(sortBy) {
-            case "new":
-                this.newestSortWords();
-                break;
-            case "old":
-                this.oldestSortWords();
-                break;
-            case "a-z":
-                this.alphaSortWords();
-                break;
-            case "random":
-                this.randomSortWords();
-                break;
-            default:
-                break;
+
+        // Close all word options.
+        const allWordOptions = document.getElementsByClassName("WordOptions");
+        for(const element of allWordOptions) {
+            element.style.visibility = "collapse";
         }
-    }
 
-    newestSortWords() {
         browser.storage.local.get("words", (result) => {
-            const allWords = result.words;
             if(result.words == undefined) {
                 return;
             }
-            allWords.sort((a, b) => {
-                if(a.date > b.date) {
-                    return -1;
-                } else if(a.date < b.date) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
-            browser.storage.local.set({
-                words: allWords
-            });
-        });
-    }
+            let allWords = result.words;
 
-    oldestSortWords() {
-        browser.storage.local.get("words", (result) => {
-            const allWords = result.words;
-            if(result.words == undefined) {
-                return;
+            // Sort the words accordingly.
+            switch(sortBy) {
+                case "new":
+                    allWords = this.newestSortWords(allWords);
+                    break;
+                case "old":
+                    allWords = this.oldestSortWords(allWords);
+                    break;
+                case "a-z":
+                    allWords = this.alphaSortWords(allWords);
+                    break;
+                case "random":
+                    allWords = this.randomSortWords(allWords);
+                    break;
+                default:
+                    break;
             }
-            allWords.sort((a, b) => {
-                if(a.date < b.date) {
-                    return -1;
-                } else if(a.date > b.date) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
-            browser.storage.local.set({
-                words: allWords
-            });
-        });
-    }
 
-    alphaSortWords() {
-        browser.storage.local.get("words", (result) => {
-            const allWords = result.words;
-            if(result.words == undefined) {
-                return;
-            }
-            allWords.sort((a, b) => {
-                return a.word.localeCompare(b.word);
-            });
-
-            // Save alphabetical ordering of words.
-            browser.storage.local.set({
-                words: allWords
-            });
-        });
-    }
-
-    randomSortWords() {
-        browser.storage.local.get("words", (result) => {
-            const allWords = result.words;
-            if(result.words == undefined) {
-                return;
-            }
-            let currentIndex = allWords.length - 1;
-            // Go through all words.
-            for(; currentIndex > 0; currentIndex--) {
-                // Select random word.
-                const randomIndex = Math.floor(Math.random() * (currentIndex + 1));
-                // Swap current word with random word.
-                [allWords[currentIndex], allWords[randomIndex]] = [allWords[randomIndex], allWords[currentIndex]];
-            }
-            
-            // Save randomized ordering of words.
+            // Store sorted words.
             browser.storage.local.set({
                 words: allWords
             });
 
         });
+    }
+
+    // Sort an array of word objects from newest to oldest.
+    newestSortWords(allWords) {
+        allWords.sort((a, b) => {
+            if(a.date > b.date) {
+                return -1;
+            } else if(a.date < b.date) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        return allWords;
+
+    }
+
+    // Sort an array of word objects from oldest to newest.
+    oldestSortWords(allWords) {
+        allWords.sort((a, b) => {
+            if(a.date < b.date) {
+                return -1;
+            } else if(a.date > b.date) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        return allWords;
+    }
+
+    // Sort an array of word objects alphabetically.
+    alphaSortWords(allWords) {
+        allWords.sort((a, b) => {
+            return a.word.localeCompare(b.word);
+        });
+        return allWords;
+    }
+
+    // Sort an array of word objects randomly using Durstenfeld shuffle (optimized version of Fisher-Yates).
+    randomSortWords(allWords) {
+        let currentIndex = allWords.length - 1;
+
+        // Go through all words.
+        for(; currentIndex > 0; currentIndex--) {
+
+            // Select random word.
+            const randomIndex = Math.floor(Math.random() * (currentIndex + 1));
+
+            // Swap current word with random word.
+            [allWords[currentIndex], allWords[randomIndex]] = [allWords[randomIndex], allWords[currentIndex]];
+        }
+
+        return allWords;
     }
 
     render() {
         return (
             <form>
                 <label>
-                    Sort by:&nbsp;
+                    Sort by &nbsp;&nbsp;
                     <select value={this.state.value} onChange={(e) => this.handleChange(e)}>
                         <option value="new">New</option>
                         <option value="old">Old</option>

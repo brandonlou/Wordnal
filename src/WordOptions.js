@@ -8,7 +8,11 @@ class WordOptions extends React.Component {
         super(props);
     }
 
-    delete() {
+    handleEdit() {
+        return;
+    }
+
+    handleDelete() {
         // Get current stored words.
         browser.storage.local.get("words", (results) => {
             let allWords = results.words;
@@ -41,9 +45,12 @@ class WordOptions extends React.Component {
         return (
             <tr id={word + "-options"} className="WordOptions">
                 <td colspan="3">
-                    More definitions...
-                    <button onClick={}>Edit</button>
-                    <button onClick={() => this.delete()}>Delete</button>
+                    <select>
+                        <option>Test 1</option>
+                        <option>Test 2</option>
+                    </select>
+                    <button onClick={() => this.handleEdit()}>Edit</button>
+                    <button onClick={() => this.handleDelete()}>Delete</button>
                 </td>
             </tr>
         );
