@@ -1,5 +1,7 @@
 import React from 'react';
 import WordOptions from './WordOptions.js';
+import TableHeader from './TableHeader.js';
+import TableFooter from './TableFooter.js';
 
 export default class Table extends React.Component {
 
@@ -80,12 +82,9 @@ export default class Table extends React.Component {
     render() {
         return (
             <table>
-                <tr className="TableHeader">
-                    <th>Word</th>
-                    <th>Definition</th>
-                    <th>Date Added</th>
-                </tr>
+                <TableHeader />
                 {this.props.value && this.props.value.map((item, i) => this.renderRow(item, i))}
+                <TableFooter value={this.props.value && this.props.value.length}/>
             </table>
         );
     }
